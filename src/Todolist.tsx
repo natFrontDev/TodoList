@@ -5,19 +5,21 @@ import {Simulate} from "react-dom/test-utils";
 import './App.css';
 
 
-type TaskType = {
+export type TaskType = {
     id: string
     title: string
     isDone: boolean
 }
 
 type PropsType = {
+    id: string
     title: string
     tasks: Array<TaskType>
-    removeTask: (taskId: string) => void
-    changeFilter: (value: FilterValuesType) => void
-    addTask: (title: string) => void
-    changeTaskStatus: (id: string, isDone: boolean) => void
+    removeTodoList: (toDoListId:string) => void
+    removeTask: (taskId: string, toDoListId:string) => void
+    changeFilter: (value: FilterValuesType, toDoListId:string) => void
+    addTask: (title: string, toDoListId:string) => void
+    changeTaskStatus: (id: string, isDone: boolean, toDoListId:string) => void
     filter: FilterValuesType
 }
 
@@ -29,7 +31,7 @@ export function Todolist(props: PropsType) {
 
     const addTask = () => {
         if (title.trim () !==""){
-        props.addTask(title.trim())
+        props.addTask(title.trim(),props.id)
         setTitle("")
         setError(null)} else
         {setError("Title is required!")}
@@ -47,12 +49,13 @@ export function Todolist(props: PropsType) {
         }
     }
 
-    const onAllClickHandler = () => props.changeFilter("all");
-    const onActiveClickHandler = () => props.changeFilter("active");
-    const onCompletedClickHandler = () => props.changeFilter("completed");
+    const onAllClickHandler = () => props.changeFilter("all", props.id );
+    const onActiveClickHandler = () => props.changeFilter("active", props.id );
+    const onCompletedClickHandler = () => props.changeFilter("completed", props.id );
 
     return <div>
-        <h3>{props.title}</h3>
+        <span>{props.title}</span>
+        <button onClick={()=>{props.removeTodoList(props.id)}}>x</button>
         <div>
             <input
                 value={title}
@@ -66,10 +69,10 @@ export function Todolist(props: PropsType) {
         <ul>
             {props.tasks.map(t => {
 
-                    const onClickHandler = () => props.removeTask(t.id)
+                    const onClickHandler = () => props.removeTask(t.id, props.id)
                     const onChangeHandler = (e:ChangeEvent<HTMLInputElement>) =>{
                         let newIsDoneValue = e.currentTarget.checked
-                        props.changeTaskStatus (t.id,newIsDoneValue)
+                        props.changeTaskStatus (t.id,newIsDoneValue, props.id)
                     }
 
                     return <li key={t.id} className={t.isDone?"is-done":""}>
