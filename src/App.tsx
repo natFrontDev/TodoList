@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import './App.css';
 import {TaskType, Todolist} from "./Todolist";
 import {v1} from "uuid";
+import {AddItemForm} from "./AddItemForm";
 
 
 
@@ -43,10 +44,27 @@ function App() {
         ]
     })
 
+    function addTodoList (title:string)  {
+        let newTodolistId= v1();
+        let newTodolist:TodolistsType = {id: newTodolistId, title: title, filter: 'all'}
+        setTodolists ([newTodolist, ...todolists])
+        setTasks({...tasks, [newTodolistId]:[]})
+    }
+
     function removeTodoList(toDoListId:string) {
         setTodolists(todolists.filter(t => t.id !== toDoListId))
         delete tasks[toDoListId]
         setTasks({...tasks})
+    }
+
+
+    function changeTitleList (title:string,id:string) {
+        debugger
+       const todolist = todolists.find(t => t.id === id);
+        if (todolist) {
+            todolist.title = title;
+            setTodolists([...todolists])
+        }
     }
 
     function removeTask(id: string, toDoListId:string) {
@@ -71,6 +89,14 @@ function App() {
         }
     }
 
+    function changeTaskTitle (id: string, value:string,  toDoListId:string) {
+        let todolistTasks = tasks[toDoListId]
+        let task= todolistTasks.find(t => t.id === id)
+        if (task) {
+            task.title = value
+            setTasks({...tasks})
+        }
+    }
 
 
     function changeFilter (value: FilterValuesType, toDoListId:string) {
@@ -82,7 +108,10 @@ function App() {
     }
 
     return (
+
         <div className="App">
+            <AddItemForm addItem={addTodoList}/>
+
             {todolists.map ((tl)=> {
 
                 let tasksForTodolist = tasks[tl.id]
@@ -97,9 +126,11 @@ function App() {
 
                 return <Todolist key = {tl.id}
                                  id = {tl.id}
-                                 title="What to learn"
+                                 title= {tl.title}
                                  tasks={tasksForTodolist}
                                  removeTodoList={removeTodoList}
+                                 changeTitleList = {changeTitleList}
+                                 changeTaskTitle = {changeTaskTitle}
                                  removeTask={removeTask}
                                  changeFilter={changeFilter}
                                  addTask={addTask}
