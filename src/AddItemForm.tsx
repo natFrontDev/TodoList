@@ -1,4 +1,6 @@
 import React, {ChangeEvent, KeyboardEvent, useState} from "react";
+import {Button, IconButton, TextField} from "@mui/material";
+import DataSaverOnIcon from '@mui/icons-material/DataSaverOn';
 
 
 export type addTypeFormType = {
@@ -28,16 +30,19 @@ export const AddItemForm = (props:addTypeFormType) => {
             addTask();
         }
     }
+
     return (
         <div>
-            <input
+            <TextField
+                label={"Type value"}
+                variant="outlined"
+                helperText={error}
+                error = {!!error}
                 value={title}
                 onChange={onChangeHandler}
                 onKeyPress={onKeyPressHandler}
-                className={error? "error":""}
             />
-            <button onClick={addTask}>+</button>
-            {error&&<div className="error-message"> {error} </div>}
+            <IconButton  onClick={addTask}><DataSaverOnIcon/></IconButton>
         </div>
     )
 }
