@@ -1,10 +1,9 @@
 
-import React, {ChangeEvent, useState, KeyboardEvent} from "react";
+import React, {ChangeEvent} from "react";
 import {FilterValuesType} from "./App";
-import {Simulate} from "react-dom/test-utils";
 import './App.css';
-import {AddItemForm} from "./AddItemForm";
-import {EditableSpan} from "./EditableSpan";
+import {AddItemForm} from "./Components/AddItemForm";
+import {EditableSpan} from "./Components/EditableSpan";
 import {Delete} from "@mui/icons-material";
 import {Button, Checkbox, IconButton} from "@mui/material";
 

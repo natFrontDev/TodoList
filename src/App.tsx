@@ -2,8 +2,7 @@ import React, {useState} from 'react';
 import './App.css';
 import {TaskType, Todolist} from "./Todolist";
 import {v1} from "uuid";
-import {AddItemForm} from "./AddItemForm";
-import {tab} from "@testing-library/user-event/dist/tab";
+import {AddItemForm} from "./Components/AddItemForm";
 import {AppBar, Button, Container, Grid, IconButton, Paper, Toolbar, Typography} from '@mui/material';
 import {Menu} from "@mui/icons-material";
 
@@ -17,16 +16,12 @@ export  type TodolistsType = {
     filter: "all"|"active"|"completed"
 }
 
-
 type TasksStateType = {
 [key:string]: Array <TaskType>
 }
 
 
-
 function App() {
-
-
 
     let todolistID1 = v1()
     let todolistID2 = v1()
@@ -48,8 +43,6 @@ function App() {
             {id: v1(), title: 'GraphQL', isDone: false},
         ]
     })
-
-
 
 
     function addTodoList (title:string)  {
@@ -74,6 +67,15 @@ function App() {
             setTodolists([...todolists])
         }
     }
+
+    function changeFilter (value: FilterValuesType, toDoListId:string) {
+        let todolist = todolists.find (tl => tl.id === toDoListId)
+        if (todolist) {
+            todolist.filter=value
+            setTodolists([...todolists])
+        }
+    }
+
 
     function removeTask(id: string, toDoListId:string) {
         let todolistTasks = tasks[toDoListId]
@@ -107,13 +109,7 @@ function App() {
     }
 
 
-    function changeFilter (value: FilterValuesType, toDoListId:string) {
-        let todolist = todolists.find (tl => tl.id === toDoListId)
-        if (todolist) {
-            todolist.filter=value
-            setTodolists([...todolists])
-        }
-    }
+
 
     return (
 
