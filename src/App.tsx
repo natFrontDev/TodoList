@@ -16,7 +16,7 @@ export  type TodolistsType = {
     filter: "all"|"active"|"completed"
 }
 
-type TasksStateType = {
+export type TasksStateType = {
 [key:string]: Array <TaskType>
 }
 
