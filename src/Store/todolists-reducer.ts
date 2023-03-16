@@ -69,23 +69,29 @@ export const changeFilterTodolistAC = (todolistId:string, filter: FilterValuesTy
 
 
 
-type TodolistType = {
+export type TodolistType = {
     id:string,
     title: string,
     filter: FilterValuesType
 }
 
+export let todolistID1 = v1()
+export let todolistID2 = v1()
 
+const initialState: Array<TodolistType> = [
+    {id: todolistID1, title: 'What to learn', filter: 'all'},
+    {id: todolistID2, title: 'What to buy', filter: 'all'},
+]
 
-export const todolistsReducer = (state: Array<TodolistType>,action:TodolistsActionType): Array<TodolistType>=> {
-
+export const todolistsReducer = (state: Array<TodolistType> = initialState,action:TodolistsActionType): Array<TodolistType>=> {
+    debugger
     let copyState
     switch (action.type) {
         case REMOVE_TODOLIST:
             copyState = state.filter(i=> i.id !== action.id)
             return copyState
         case ADD_TODOLIST:
-            return [...state, {id:action.id, title:action.title, filter: "all"}]
+            return [{id:action.id, title:action.title, filter: "all"},...state]
         case CHANGE_TITLE_TODOLIST:
             copyState = state.map((i) => {
                 if (i.id === action.id) {
@@ -106,7 +112,7 @@ export const todolistsReducer = (state: Array<TodolistType>,action:TodolistsActi
             return copyState
 
         default:
-            throw new Error("This action is unknown")
+            return [...state]
     }
 }
 

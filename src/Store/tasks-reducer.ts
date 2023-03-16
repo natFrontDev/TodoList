@@ -1,6 +1,12 @@
 import {v1} from "uuid";
-import {TasksStateType} from "../App";
-import {ADD_TODOLIST, AddTodolistActionType, REMOVE_TODOLIST, RemoveTodolistActionType} from "./todolists-reducer";
+import {TasksStateType, TodolistsType} from "../App";
+import {
+    ADD_TODOLIST,
+    AddTodolistActionType,
+    REMOVE_TODOLIST,
+    RemoveTodolistActionType, todolistID1,
+    todolistID2
+} from "./todolists-reducer";
 
 
 export const REMOVE_TASK = "REMOVE_TASK"
@@ -8,7 +14,6 @@ export const ADD_TASK = "ADD_TASK"
 export const CHANGE_STATUS_TASK= "CHANGE_STATUS_TASK"
 export const CHANGE_TASK_TITLE= "CHANGE_TASK_TITLE"
 // export const CHANGE_FILTER_TODOLIST = "CHANGE_FILTER_TODOLIST"
-
 
 
 export type  RemoveTaskActionType = {
@@ -75,8 +80,21 @@ export const changeTaskTitleAC = (taskId:string, title:string, todolistId:string
 //     filter: filter,
 //     id:todolistId,
 //     type: CHANGE_FILTER_TODOLIST})
+const  initialState: TasksStateType = {
+    [todolistID1]: [
+    {id: v1(), title: 'HTML&CSS', isDone: true},
+    {id: v1(), title: 'JS', isDone: true},
+    {id: v1(), title: 'ReactJS', isDone: false},
 
-export const tasksReducer = (state: TasksStateType, action: TasksActionType): TasksStateType => {
+],
+    [todolistID2]: [
+    {id: v1(), title: 'Rest API', isDone: true},
+    {id: v1(), title: 'GraphQL', isDone: false},
+]
+}
+
+export const tasksReducer = (state: TasksStateType = initialState, action: TasksActionType): TasksStateType => {
+
 
     let copyState
     switch (action.type) {
@@ -127,7 +145,7 @@ export const tasksReducer = (state: TasksStateType, action: TasksActionType): Ta
             return copyState
 
         default:
-            throw new Error("This action is unknown")
+            return {...state}
     }
 }
 

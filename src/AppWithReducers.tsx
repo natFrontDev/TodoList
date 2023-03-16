@@ -1,10 +1,18 @@
-import React, {useState} from 'react';
+import React, {useReducer, useState} from 'react';
 import './App.css';
 import {TaskType, Todolist} from "./Todolist";
 import {v1} from "uuid";
 import {AddItemForm} from "./Components/AddItemForm";
 import {AppBar, Button, Container, Grid, IconButton, Paper, Toolbar, Typography} from '@mui/material';
 import {Menu} from "@mui/icons-material";
+import {
+    addTodolistAC,
+    changeFilterTodolistAC,
+    changeTitleTodolistAC,
+    removeTodolistAC,
+    todolistsReducer
+} from "./Store/todolists-reducer";
+import {addTaskAC, changeTaskStatusAC, changeTaskTitleAC, removeTaskAC, tasksReducer} from "./Store/tasks-reducer";
 
 
 
@@ -17,21 +25,21 @@ export  type TodolistsType = {
 }
 
 export type TasksStateType = {
-[key:string]: Array <TaskType>
+    [key:string]: Array <TaskType>
 }
 
 
-function App() {
+function AppWithReducers() {
 
     let todolistID1 = v1()
     let todolistID2 = v1()
 
-    let [todolists, setTodolists] = useState<Array<TodolistsType>>([
+    let [todolists, dispatchToTodolists] = useReducer(todolistsReducer,[
         {id: todolistID1, title: 'What to learn', filter: 'all'},
         {id: todolistID2, title: 'What to buy', filter: 'all'},
     ])
 
-    let [tasks, setTasks] = useState<TasksStateType>({
+    let [tasks, dispatchToTasks] = useReducer(tasksReducer, {
         [todolistID1]: [
             {id: v1(), title: 'HTML&CSS', isDone: true},
             {id: v1(), title: 'JS', isDone: true},
@@ -46,69 +54,40 @@ function App() {
 
 
     function addTodoList (title:string)  {
-        let newTodolistId= v1();
-        let newTodolist:TodolistsType = {id: newTodolistId, title: title, filter: 'all'}
-        setTodolists ([newTodolist, ...todolists])
-        setTasks({...tasks, [newTodolistId]:[]})
+        let action = addTodolistAC(title)
+        dispatchToTodolists(action)
+        dispatchToTasks(action)
     }
 
     function removeTodoList(toDoListId:string) {
-        setTodolists(todolists.filter(t => t.id !== toDoListId))
-        delete tasks[toDoListId]
-        setTasks({...tasks})
+       dispatchToTodolists(removeTodolistAC(toDoListId))
+       dispatchToTasks(removeTodolistAC(toDoListId))
     }
 
-
-    function changeTitleList (title:string,id:string) {
-        debugger
-       const todolist = todolists.find(t => t.id === id);
-        if (todolist) {
-            todolist.title = title;
-            setTodolists([...todolists])
-        }
+    function changeTitleList (id:string, title:string) {
+        dispatchToTodolists(changeTitleTodolistAC(id,title))
     }
 
-    function changeFilter ( toDoListId:string, value: FilterValuesType) {
-        let todolist = todolists.find (tl => tl.id === toDoListId)
-        if (todolist) {
-            todolist.filter=value
-            setTodolists([...todolists])
-        }
+    function changeFilter (toDoListId:string, value: FilterValuesType) {
+   dispatchToTodolists(changeFilterTodolistAC(toDoListId,value))
     }
 
 
     function removeTask(id: string, toDoListId:string) {
-        let todolistTasks = tasks[toDoListId]
-        tasks[toDoListId]=todolistTasks.filter(t => t.id !== id)
-        setTasks({...tasks})
+        dispatchToTasks(removeTaskAC(id, toDoListId))
     }
 
     function addTask (title:string, toDoListId:string)  {
-       let todolistTasks = tasks[toDoListId]
-       let task = {id: v1(), title: title, isDone: false}
-       tasks[toDoListId] = [task,...todolistTasks]
-       setTasks({...tasks})
+        dispatchToTasks(addTaskAC(title,toDoListId))
     }
 
     function changeTasksStatus(id: string, isDone: boolean,  toDoListId:string) {
-        let todolistTasks = tasks[toDoListId]
-        let task= todolistTasks.find(t => t.id === id)
-        if (task) {
-            task.isDone = isDone
-            setTasks({...tasks})
-        }
+      dispatchToTasks(changeTaskStatusAC(id, isDone, toDoListId))
     }
 
     function changeTaskTitle (id: string, value:string,  toDoListId:string) {
-        let todolistTasks = tasks[toDoListId]
-        let task= todolistTasks.find(t => t.id === id)
-        if (task) {
-            task.title = value
-            setTasks({...tasks})
-        }
+      dispatchToTasks(changeTaskTitleAC(id, value, toDoListId))
     }
-
-
 
 
     return (
@@ -151,18 +130,18 @@ function App() {
 
                         return <Grid item>
                             <Paper style = {{padding:"10px"}}>
-                            <Todolist key={tl.id}
-                                      id={tl.id}
-                                      title={tl.title}
-                                      tasks={tasksForTodolist}
-                                      removeTodoList={removeTodoList}
-                                      changeTitleList={changeTitleList}
-                                      changeTaskTitle={changeTaskTitle}
-                                      removeTask={removeTask}
-                                      changeFilter={changeFilter}
-                                      addTask={addTask}
-                                      filter={tl.filter}
-                                      changeTaskStatus={changeTasksStatus}/>
+                                <Todolist key={tl.id}
+                                          id={tl.id}
+                                          title={tl.title}
+                                          tasks={tasksForTodolist}
+                                          removeTodoList={removeTodoList}
+                                          changeTitleList={changeTitleList}
+                                          changeTaskTitle={changeTaskTitle}
+                                          removeTask={removeTask}
+                                          changeFilter={changeFilter}
+                                          addTask={addTask}
+                                          filter={tl.filter}
+                                          changeTaskStatus={changeTasksStatus}/>
                             </Paper>
                         </Grid>
                     })}
@@ -172,4 +151,5 @@ function App() {
     );
 }
 
-export default App;
+
+export default AppWithReducers;

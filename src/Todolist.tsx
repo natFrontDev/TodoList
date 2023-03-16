@@ -1,7 +1,6 @@
 
 import React, {ChangeEvent} from "react";
 import {FilterValuesType} from "./App";
-import './App.css';
 import {AddItemForm} from "./Components/AddItemForm";
 import {EditableSpan} from "./Components/EditableSpan";
 import {Delete} from "@mui/icons-material";
@@ -21,7 +20,7 @@ type PropsType = {
     removeTodoList: (toDoListId:string) => void
     changeTitleList: (title:string, id:string) => void
     removeTask: (taskId: string, toDoListId:string) => void
-    changeFilter: (value: FilterValuesType, toDoListId:string) => void
+    changeFilter: ( toDoListId:string, value: FilterValuesType) => void
     addTask: (title: string, toDoListId:string) => void
     changeTaskStatus: (id: string, isDone: boolean, toDoListId:string) => void
     changeTaskTitle: (value:string,id: string, toDoListId:string)=> void
@@ -30,9 +29,9 @@ type PropsType = {
 
 export function Todolist(props: PropsType) {
 
-    const onAllClickHandler = () => props.changeFilter("all", props.id );
-    const onActiveClickHandler = () => props.changeFilter("active", props.id );
-    const onCompletedClickHandler = () => props.changeFilter("completed", props.id );
+    const onAllClickHandler = () => props.changeFilter(props.id, "all" );
+    const onActiveClickHandler = () => props.changeFilter(props.id ,"active");
+    const onCompletedClickHandler = () => props.changeFilter(props.id,"completed" );
 
     const addTask = (title: string) => {
         props.addTask (title,props.id )
@@ -75,6 +74,5 @@ export function Todolist(props: PropsType) {
         </div>
     </div>
 }
-
 
 
